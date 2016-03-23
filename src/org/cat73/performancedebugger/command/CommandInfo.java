@@ -19,6 +19,12 @@ public @interface CommandInfo {
     /** 命令的使用方法 */
     String usage() default "";
 
+    /** 命令的说明 */
+    String description() default "";
+
     /** 命令的帮助信息 */
-    String help() default "";
+    String[] help() default "";
+
+    // TODO 命令的简写列表
+    // String[] aliases() default "";
 }

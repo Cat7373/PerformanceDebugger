@@ -22,7 +22,7 @@ import org.cat73.performancedebugger.command.ICommand;
  *
  * @author cat73
  */
-@CommandInfo(name = "DumpChunks", help = "统计 Chunk 信息并写出到日志文件里")
+@CommandInfo(name = "DumpChunks", description = "统计 Chunk 信息并写出到日志文件里")
 public class DumpChunks implements ICommand {
     /** Bukkit 的 Server 接口 */
     private final static Server server = Bukkit.getServer();

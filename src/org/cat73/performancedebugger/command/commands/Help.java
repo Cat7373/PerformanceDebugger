@@ -15,7 +15,7 @@ import org.cat73.performancedebugger.command.ICommand;
  *
  * @author cat73
  */
-@CommandInfo(name = "help", usage = "[page] [commandName]", help = "打印帮助信息")
+@CommandInfo(name = "help", usage = "[page] [commandName]", description = "打印帮助信息")
 public class Help implements ICommand {
     /** 每页输出多少条帮助 */
     private static final int pageCommandCount = 8;
@@ -75,7 +75,7 @@ public class Help implements ICommand {
         for (int i = 0; i < Help.pageCommandCount && it.hasNext(); i++) {
             final ICommand commandExecer = it.next();
             final CommandInfo info = CommandHandler.getCommandInfo(commandExecer);
-            sender.sendMessage(ChatColor.GREEN + String.format("%s -- %s", info.name(), info.help()));
+            sender.sendMessage(ChatColor.GREEN + String.format("%s -- %s", info.name(), info.description()));
         }
     }
 
@@ -89,6 +89,11 @@ public class Help implements ICommand {
         final CommandInfo info = CommandHandler.getCommandInfo(command);
         sender.sendMessage(String.format("%s%s------- help %s ----------------", ChatColor.AQUA, ChatColor.BOLD, info.name()));
         sender.sendMessage(ChatColor.GREEN + String.format("/%s %s %s", CommandHandler.BASE_COMMAND, info.name(), info.usage()));
-        sender.sendMessage(ChatColor.GREEN + info.help());
+        sender.sendMessage(ChatColor.GREEN + info.description());
+        for (final String line : info.help()) {
+            if (!line.equals("")) {
+                sender.sendMessage(ChatColor.GREEN + line);
+            }
+        }
     }
 }

@@ -13,6 +13,7 @@ import org.cat73.performancedebugger.command.commands.DumpChunks;
 import org.cat73.performancedebugger.command.commands.Help;
 import org.cat73.performancedebugger.command.commands.PlayersInfo;
 import org.cat73.performancedebugger.command.commands.TPChunk;
+import org.cat73.performancedebugger.command.commands.TPS;
 
 // TODO 增加 reload
 // TODO 增加区块实体 TOP 10
@@ -35,6 +36,7 @@ public class CommandHandler implements CommandExecutor, IModule {
         CommandHandler.registerCommand(new DumpChunks());
         CommandHandler.registerCommand(new PlayersInfo());
         CommandHandler.registerCommand(new TPChunk());
+        CommandHandler.registerCommand(new TPS());
     }
 
     /**

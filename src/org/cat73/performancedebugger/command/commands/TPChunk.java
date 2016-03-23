@@ -17,7 +17,7 @@ import org.cat73.performancedebugger.command.ICommand;
  *
  * @author cat73
  */
-@CommandInfo(name = "TPChunk", usage = "<x> <z>", help = "TP 到目标 Chunk 的中心")
+@CommandInfo(name = "TPChunk", usage = "<x> <z>", description = "TP 到目标 Chunk 的中心")
 public class TPChunk implements ICommand {
     /** Bukkit 的 Server 接口 */
     private final static Server server = Bukkit.getServer();

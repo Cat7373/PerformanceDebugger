@@ -15,7 +15,7 @@ import org.cat73.performancedebugger.command.ICommand;
  *
  * @author cat73
  */
-@CommandInfo(name = "PlayersInfo", help = "显示所有玩家的位置")
+@CommandInfo(name = "PlayersInfo", description = "显示所有玩家的位置")
 public class PlayersInfo implements ICommand {
     /** Bukkit 的 Server 接口 */
     private final static Server server = Bukkit.getServer();
