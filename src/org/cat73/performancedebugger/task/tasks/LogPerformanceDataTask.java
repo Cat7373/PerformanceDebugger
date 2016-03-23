@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.Writer;
 import java.lang.management.ManagementFactory;
+import java.util.List;
 
 import org.bukkit.Chunk;
 import org.bukkit.Server;
@@ -51,6 +52,7 @@ public class LogPerformanceDataTask implements Runnable {
             return;
         }
 
+        // TODO 异步文件读写, 不要占用主线程时间
         // 打开 log 文件并写出日志
         try (Writer logWriter = new FileWriter(this.logFile, true)) {
             // 运行时间
@@ -71,29 +73,25 @@ public class LogPerformanceDataTask implements Runnable {
 
             // 统计每个世界的信息
             for (final World world : this.server.getWorlds()) {
+                // 准备数据
+                final Chunk[] chunks = world.getLoadedChunks();
+                final List<Player> players = world.getPlayers();
+
                 // 当前世界的统计数据
-                int worldChunkCount = 0;
-                int worldEntityCount = 0;
+                final int worldChunkCount = chunks.length;
+                final int worldEntityCount = world.getEntities().size();
                 int worldTilesCount = 0;
-                int worldPlayerCount = 0;
+                final int worldPlayerCount = players.size();
                 final String worldName = world.getName();
 
                 // 统计每个区块的信息
-                for (final Chunk chunk : world.getLoadedChunks()) {
-                    // 当前区块的统计数据
-                    final int chunkEntityCount = chunk.getEntities().length;
-                    final int chunkTilesCount = chunk.getTileEntities().length;
-
+                for (final Chunk chunk : chunks) {
                     // 更新当前世界的数据
-                    worldChunkCount++;
-                    worldEntityCount += chunkEntityCount;
-                    worldTilesCount += chunkTilesCount;
+                    worldTilesCount += chunk.getTileEntities().length;
                 }
 
                 // 统计当前世界的玩家信息
-                for (final Player player : world.getPlayers()) {
-                    worldPlayerCount++;
-
+                for (final Player player : players) {
                     // 在玩家列表中增加玩家
                     playerList.append(player.getName());
                     playerList.append(", ");
