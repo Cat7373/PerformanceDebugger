@@ -10,9 +10,7 @@ import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.cat73.performancedebugger.PerformanceDebugger;
-import org.cat73.performancedebugger.utils.GetTPS;
 
 /**
  * 记录性能日志的 Task<br>
@@ -21,7 +19,7 @@ import org.cat73.performancedebugger.utils.GetTPS;
  *
  * @author Cat73
  */
-public class LogPerformanceDataTask extends BukkitRunnable {
+public class LogPerformanceDataTask implements Runnable {
     /** Bukkit 的 Server 接口 */
     private final Server server;
     /** 保存日志的文件 */
@@ -40,7 +38,7 @@ public class LogPerformanceDataTask extends BukkitRunnable {
         // 写出数据头
         // 运行时间,TPS,玩家数,总区块数,总实体数,总tiles,剩余内存,每个世界的数据细节,玩家列表
         try (Writer logWriter = new FileWriter(this.logFile, true)) {
-            logWriter.write("RunTime(s)\tTPS\tPlayerCount\tChunkCount\tEntityCount\tTilesCount\tFreeMem(MB)\tWorldDatas\tPlayers\n");
+            logWriter.write("RunTime(s)\tTPS(Recent 100 tick average)\tPlayerCount\tChunkCount\tEntityCount\tTilesCount\tFreeMem(MB)\tWorldDatas\tPlayers\n");
         } catch (final Exception e) {
             e.printStackTrace();
         }
@@ -58,7 +56,7 @@ public class LogPerformanceDataTask extends BukkitRunnable {
             // 运行时间
             final int runTime = (int) ((System.currentTimeMillis() - ManagementFactory.getRuntimeMXBean().getStartTime()) / 1000L);
             // TPS
-            final double tps = GetTPS.getTPS();
+            final double tps = CalculationTPSTask.getLastTPS();
             // 剩余内存 MB
             final int freeRAM = (int) (Runtime.getRuntime().freeMemory() / 1024L / 1024L);
 
