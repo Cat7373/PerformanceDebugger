@@ -1,0 +1,14 @@
+name: PerformanceDebugger
+main: org.cat73.performancedebugger.PerformanceDebugger
+author: Cat73
+version: 1.0.0
+commands:
+  performancedebugger:
+    description: PerformanceDebugger base command
+    usage: /performancedebugger help
+    aliases: [pd]
+    permission: performancedebugger.use
+permissions:
+  performancedebugger.use:
+    description: Allows access to all PerformanceDebugger command.
+    default: op

@@ -1,0 +1,7 @@
+/*
+!.gitignore
+!/src/
+!config.yml
+!plugin.yml
+!README.md
+!LICENSE
