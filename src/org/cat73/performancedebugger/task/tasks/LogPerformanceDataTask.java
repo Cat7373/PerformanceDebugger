@@ -2,6 +2,7 @@ package org.cat73.performancedebugger.task.tasks;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.Writer;
 import java.lang.management.ManagementFactory;
 import java.util.List;
@@ -9,9 +10,12 @@ import java.util.List;
 import org.bukkit.Chunk;
 import org.bukkit.Server;
 import org.bukkit.World;
+import org.bukkit.craftbukkit.libs.jline.internal.Log;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitScheduler;
 import org.cat73.performancedebugger.PerformanceDebugger;
+import org.cat73.performancedebugger.task.ITask;
 
 /**
  * 记录性能日志的 Task<br>
@@ -20,28 +24,60 @@ import org.cat73.performancedebugger.PerformanceDebugger;
  *
  * @author Cat73
  */
-public class LogPerformanceDataTask implements Runnable {
+public class LogPerformanceDataTask implements ITask {
     /** Bukkit 的 Server 接口 */
-    private final Server server;
+    private Server server;
     /** 保存日志的文件 */
-    private final File logFile;
+    private Writer logWriter = null;
     /** 目标更新间隔 */
-    private final int interval;
+    private int interval;
     /** 上次记录日志的时间 */
     private long lastLogTime;
+    /** Task ID */
+    private int taskID = -1;
 
-    public LogPerformanceDataTask(final JavaPlugin instance, final int interval) {
-        this.server = instance.getServer();
-        this.logFile = PerformanceDebugger.getFile("log_%s.log");
-        this.interval = interval;
-        this.lastLogTime = System.currentTimeMillis();
+    @Override
+    public void start(final BukkitScheduler scheduler, final JavaPlugin javaPlugin) {
+        this.server = javaPlugin.getServer();
+
+        // 打开日志文件
+        final File logFile = PerformanceDebugger.getFile("log_%s.log");
+        try (Writer logWriter = new FileWriter(logFile, true)) {
+            this.logWriter = logWriter;
+        } catch (final Exception e) {
+            Log.warn("打开日志文件失败: %s", logFile.getName());
+            e.printStackTrace();
+            return;
+        }
+
+        // 读取配置
+        this.interval = javaPlugin.getConfig().getInt("interval", 10000);
 
         // 写出数据头
-        // 运行时间,TPS,玩家数,总区块数,总实体数,总tiles,剩余内存,每个世界的数据细节,玩家列表
-        try (Writer logWriter = new FileWriter(this.logFile, true)) {
-            logWriter.write("RunTime(s)\tTPS(Recent 100 tick average)\tPlayerCount\tChunkCount\tEntityCount\tTilesCount\tFreeMem(MB)\tWorldDatas\tPlayers\n");
+        try {
+            // 运行时间,TPS,玩家数,总区块数,总实体数,总tiles,剩余内存,每个世界的数据细节,玩家列表
+            this.logWriter.write("RunTime(s)\tTPS(Recent 100 tick average)\tPlayerCount\tChunkCount\tEntityCount\tTilesCount\tFreeMem(MB)\tWorldDatas\tPlayers\n");
         } catch (final Exception e) {
             e.printStackTrace();
+        }
+
+        // 启动 Task
+        this.lastLogTime = System.currentTimeMillis();
+        this.taskID = scheduler.runTaskTimer(javaPlugin, this, 20, 20).getTaskId();
+    }
+
+    @Override
+    public void cancel(final BukkitScheduler scheduler) {
+        if (this.taskID != -1) {
+            // 取消 Task
+            scheduler.cancelTask(this.taskID);
+            
+            // 关闭文件
+            try {
+                this.logWriter.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -54,7 +90,7 @@ public class LogPerformanceDataTask implements Runnable {
 
         // TODO 异步文件读写, 不要占用主线程时间
         // 打开 log 文件并写出日志
-        try (Writer logWriter = new FileWriter(this.logFile, true)) {
+        try {
             // 运行时间
             final int runTime = (int) ((System.currentTimeMillis() - ManagementFactory.getRuntimeMXBean().getStartTime()) / 1000L);
             // TPS
@@ -117,7 +153,7 @@ public class LogPerformanceDataTask implements Runnable {
 
             // 写出到日志文件
             // 运行时间,TPS,玩家数,总区块数,总实体数,总tiles,剩余内存,每个世界的数据细节,玩家列表
-            logWriter.write(String.format("%d\t%f\t%d\t%d\t%d\t%d\t%d\t%s\t%s\n", runTime, tps, totalPlayerCount, totalChunkCount, totalEntityCount, totalTilesCount, freeRAM, worldData, playerList));
+            this.logWriter.write(String.format("%d\t%f\t%d\t%d\t%d\t%d\t%d\t%s\t%s\n", runTime, tps, totalPlayerCount, totalChunkCount, totalEntityCount, totalTilesCount, freeRAM, worldData, playerList));
         } catch (final Exception e) {
             e.printStackTrace();
         }
