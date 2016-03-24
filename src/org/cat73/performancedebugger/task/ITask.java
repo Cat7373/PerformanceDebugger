@@ -11,7 +11,7 @@ import org.bukkit.scheduler.BukkitScheduler;
 public interface ITask extends Runnable {
     /**
      * 启用该 Task
-     * 
+     *
      * @param scheduler
      * @param javaPlugin 插件主类
      */
@@ -19,7 +19,7 @@ public interface ITask extends Runnable {
 
     /**
      * 停用该 Task
-     * 
+     *
      * @param scheduler
      */
     void cancel(BukkitScheduler scheduler);

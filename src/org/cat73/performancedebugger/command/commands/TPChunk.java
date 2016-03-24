@@ -17,7 +17,7 @@ import org.cat73.performancedebugger.command.ICommand;
  *
  * @author cat73
  */
-@CommandInfo(name = "TPChunk", usage = "<x> <z>", description = "TP 到目标 Chunk 的中心")
+@CommandInfo(name = "TPChunk", usage = "<x> <z> [world]", description = "TP 到目标 Chunk 的中心")
 public class TPChunk implements ICommand {
     /** Bukkit 的 Server 接口 */
     private final static Server server = Bukkit.getServer();
@@ -31,8 +31,16 @@ public class TPChunk implements ICommand {
             return false;
         }
 
+        // 获取目标玩家
         final Player player = TPChunk.server.getPlayer(sender.getName());
-        final World world = player.getWorld();
+        
+        // 获取目标世界
+        World world = null;
+        if (args.length > 2) {
+            String worldName = args[2];
+            world = server.getWorld(worldName);
+        }
+        world = world != null ? world : player.getWorld();
 
         // 计算目标坐标
         int posX = Integer.parseInt(args[0]);

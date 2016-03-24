@@ -71,11 +71,11 @@ public class LogPerformanceDataTask implements ITask {
         if (this.taskID != -1) {
             // 取消 Task
             scheduler.cancelTask(this.taskID);
-            
+
             // 关闭文件
             try {
                 this.logWriter.close();
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 e.printStackTrace();
             }
         }
