@@ -45,7 +45,7 @@ public class DumpChunks implements ICommand {
             logWriter.write("World\tWorldName\tChunkCount\tEntityCount\tTilesCount\tPlayerCount\n");
             logWriter.write("Total\tChunkCount\tEntityCount\tTilesCount\tPlayerCount\n\n");
             logWriter.write("Type\tValues\n");
-        
+
             // 所有世界的统计数据
             int totalChunkCount = 0;
             int totalEntityCount = 0;
