@@ -25,6 +25,6 @@ public @interface CommandInfo {
     /** 命令的帮助信息 */
     String[] help() default "";
 
-    // TODO 命令的简写列表
-    // String[] aliases() default "";
+    /** 命令的简写列表 */
+    String[] aliases() default "";
 }

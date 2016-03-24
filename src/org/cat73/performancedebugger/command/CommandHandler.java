@@ -30,6 +30,9 @@ public class CommandHandler implements CommandExecutor, IModule {
     /* 存储的命令列表 */
     private static final HashMap<String, ICommand> commandList = new HashMap<String, ICommand>();
 
+    /* 命令的简写缓存 */
+    private static final HashMap<String, ICommand> aliaseCache = new HashMap<String, ICommand>();
+
     static {
         // 注册所有命令
         CommandHandler.registerCommand(new Help());
@@ -49,6 +52,9 @@ public class CommandHandler implements CommandExecutor, IModule {
         final String name = info.name().toLowerCase();
 
         CommandHandler.commandList.put(name, command);
+        for (final String aliase : info.aliases()) {
+            CommandHandler.aliaseCache.put(aliase.toLowerCase(), command);
+        }
     }
 
     /**
@@ -71,13 +77,14 @@ public class CommandHandler implements CommandExecutor, IModule {
     }
 
     /**
-     * 根据名称获取一个命令的执行器
+     * 根据名称或简写获取一个命令的执行器
      *
-     * @param name 命令的名称
-     * @return 对应命令的执行器
+     * @param nameOrAliase 命令的名称或者简写
+     * @return 命令的执行器, 如果未找到则返回 null
      */
-    public static ICommand getCommand(final String name) {
-        return CommandHandler.commandList.get(name);
+    public static ICommand getCommandByNameOrAliase(final String nameOrAliase) {
+        final ICommand command = CommandHandler.commandList.get(nameOrAliase);
+        return command != null ? command : CommandHandler.aliaseCache.get(nameOrAliase);
     }
 
     @Override
@@ -99,11 +106,11 @@ public class CommandHandler implements CommandExecutor, IModule {
                 }
 
                 // 获取目标子命令的执行器
-                ICommand commandExecer = CommandHandler.getCommand(args[0].toLowerCase());
+                ICommand commandExecer = CommandHandler.getCommandByNameOrAliase(args[0].toLowerCase());
 
                 // 获取失败则执行帮助
                 if (commandExecer == null) {
-                    commandExecer = CommandHandler.getCommand("help");
+                    commandExecer = CommandHandler.getCommandByNameOrAliase("help");
                 }
 
                 // 修剪参数 (删除子命令名)

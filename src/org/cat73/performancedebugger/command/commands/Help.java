@@ -15,7 +15,7 @@ import org.cat73.performancedebugger.command.ICommand;
  *
  * @author cat73
  */
-@CommandInfo(name = "help", usage = "[page] [commandName]", description = "打印帮助信息")
+@CommandInfo(name = "help", usage = "[page] [commandName]", description = "打印帮助信息", aliases = "h")
 public class Help implements ICommand {
     /** 每页输出多少条帮助 */
     private static final int pageCommandCount = 8;
@@ -25,7 +25,7 @@ public class Help implements ICommand {
         // 首先来判断是不是有参数 没参数就打印第一页
         if (args.length >= 1) {
             // 判断是不是请求某个已存在命令的帮助
-            final ICommand commandExecer = CommandHandler.getCommand(args[0]);
+            final ICommand commandExecer = CommandHandler.getCommandByNameOrAliase(args[0]);
             if (commandExecer != null) {
                 // 如果是则打印该命令的帮助信息
                 Help.sendCommandHelp(sender, commandExecer);
@@ -88,12 +88,29 @@ public class Help implements ICommand {
     public static void sendCommandHelp(final CommandSender sender, final ICommand command) {
         final CommandInfo info = CommandHandler.getCommandInfo(command);
         sender.sendMessage(String.format("%s%s------- help %s ----------------", ChatColor.AQUA, ChatColor.BOLD, info.name()));
+        // 命令的用法 / 参数
         sender.sendMessage(ChatColor.GREEN + String.format("/%s %s %s", CommandHandler.BASE_COMMAND, info.name(), info.usage()));
+        // 命令的说明
         sender.sendMessage(ChatColor.GREEN + info.description());
+        // 命令的帮助信息
         for (final String line : info.help()) {
-            if (!line.equals("")) {
+            if (!line.isEmpty()) {
                 sender.sendMessage(ChatColor.GREEN + line);
             }
+        }
+
+        // 命令的简写列表
+        final StringBuilder aliases = new StringBuilder("aliases: ");
+        int aliaseCount = 0;
+        for (final String aliase : info.aliases()) {
+            if (!aliase.isEmpty()) {
+                aliaseCount++;
+                aliases.append(aliase);
+                aliases.append(" ");
+            }
+        }
+        if (aliaseCount > 0) {
+            sender.sendMessage(ChatColor.GREEN + aliases.toString());
         }
     }
 }
