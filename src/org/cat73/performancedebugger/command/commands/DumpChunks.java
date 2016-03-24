@@ -37,6 +37,15 @@ public class DumpChunks implements ICommand {
 
         // 打开 log 文件并输出信息
         try (Writer logWriter = new FileWriter(logFile, true)) {
+            // 写出数据头
+            logWriter.write("Values:\n");
+            logWriter.write("WorldName\tname\n");
+            logWriter.write("Chunk\tx\tz\tEntityCount\tTilesCount\n");
+            logWriter.write("Player\tname\tx\ty\tz\n");
+            logWriter.write("World\tWorldName\tChunkCount\tEntityCount\tTilesCount\tPlayerCount\n");
+            logWriter.write("Total\tChunkCount\tEntityCount\tTilesCount\tPlayerCount\n\n");
+            logWriter.write("Type\tValues\n");
+        
             // 所有世界的统计数据
             int totalChunkCount = 0;
             int totalEntityCount = 0;
@@ -53,7 +62,7 @@ public class DumpChunks implements ICommand {
                 final String worldName = world.getName();
 
                 // 写出世界名称
-                logWriter.write(String.format("CurrentWorld: %s\n", worldName));
+                logWriter.write(String.format("WorldName\t%s\n", worldName));
 
                 // 统计每个区块的信息
                 for (final Chunk chunk : world.getLoadedChunks()) {
@@ -67,7 +76,7 @@ public class DumpChunks implements ICommand {
                     worldTilesCount += chunkTilesCount;
 
                     // 向日志写出数据
-                    logWriter.write(String.format("Chunk(%d, %d): Entity: %d, Tiles: %d\n", chunk.getX(), chunk.getZ(), chunkEntityCount, chunkTilesCount));
+                    logWriter.write(String.format("Chunk\t%d\t%d\t%d\t%d\n", chunk.getX(), chunk.getZ(), chunkEntityCount, chunkTilesCount));
                 }
 
                 // 统计当前世界的玩家信息
@@ -77,7 +86,7 @@ public class DumpChunks implements ICommand {
 
                     // 向日志写出数据
                     final Location location = player.getLocation();
-                    logWriter.write(String.format("Player(%s): x: %f, y: %f, z:%f\n", player.getName(), location.getX(), location.getY(), location.getZ()));
+                    logWriter.write(String.format("Player\t%s\t%f\t%f\t%f\n", player.getName(), location.getX(), location.getY(), location.getZ()));
                 }
 
                 // 更新所有世界的统计数据
@@ -86,22 +95,14 @@ public class DumpChunks implements ICommand {
                 totalTilesCount += worldTilesCount;
                 totalPlayerCount += worldPlayerCount;
 
-                // 当前世界的信息文本
-                final String worldInfo = String.format("World(%s): Chunk: %d, Entity: %d, Tiles: %d, Player: %d", worldName, worldChunkCount, worldEntityCount, worldTilesCount, worldPlayerCount);
-
                 // 向日志写出数据并向执行者输出信息
-                logWriter.write(worldInfo);
-                logWriter.write("\n\n");
-                sender.sendMessage(ChatColor.GREEN + worldInfo);
+                logWriter.write(String.format("World\t%s\t%d\t%d\t%d\t%d\n\n", worldName, worldChunkCount, worldEntityCount, worldTilesCount, worldPlayerCount));
+                sender.sendMessage(ChatColor.GREEN + String.format("World(%s): Chunk: %d, Entity: %d, Tiles: %d, Player: %d", worldName, worldChunkCount, worldEntityCount, worldTilesCount, worldPlayerCount));
             }
 
-            // 所有世界的信息文本
-            final String totalInfo = String.format("Total: Chunk: %d, Entity: %d, Tiles: %d, Player: %d", totalChunkCount, totalEntityCount, totalTilesCount, totalPlayerCount);
-
             // 向日志写出数据并向执行者输出信息
-            logWriter.write(totalInfo);
-            logWriter.write("\n");
-            sender.sendMessage(ChatColor.GREEN + totalInfo);
+            logWriter.write(String.format("Total\t%d\t%d\t%d\t%d\n", totalChunkCount, totalEntityCount, totalTilesCount, totalPlayerCount));
+            sender.sendMessage(ChatColor.GREEN + String.format("Total: Chunk: %d, Entity: %d, Tiles: %d, Player: %d", totalChunkCount, totalEntityCount, totalTilesCount, totalPlayerCount));
         } catch (final Exception e) {
             throw e;
         }

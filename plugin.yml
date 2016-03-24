@@ -1,6 +1,7 @@
 name: PerformanceDebugger
 main: org.cat73.performancedebugger.PerformanceDebugger
 author: Cat73
+website: https://github.com/Cat7373/PerformanceDebugger
 version: 1.0.0
 commands:
   performancedebugger:
