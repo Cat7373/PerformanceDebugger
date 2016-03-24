@@ -33,12 +33,12 @@ public class TPChunk implements ICommand {
 
         // 获取目标玩家
         final Player player = TPChunk.server.getPlayer(sender.getName());
-        
+
         // 获取目标世界
         World world = null;
         if (args.length > 2) {
-            String worldName = args[2];
-            world = server.getWorld(worldName);
+            final String worldName = args[2];
+            world = TPChunk.server.getWorld(worldName);
         }
         world = world != null ? world : player.getWorld();
 

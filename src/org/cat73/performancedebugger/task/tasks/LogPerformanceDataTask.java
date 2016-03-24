@@ -42,8 +42,8 @@ public class LogPerformanceDataTask implements ITask {
 
         // 打开日志文件
         final File logFile = PerformanceDebugger.getFile("log_%s.log");
-        try (Writer logWriter = new FileWriter(logFile, true)) {
-            this.logWriter = logWriter;
+        try {
+            this.logWriter = new FileWriter(logFile, true);
         } catch (final Exception e) {
             Log.warn("打开日志文件失败: %s", logFile.getName());
             e.printStackTrace();
@@ -57,6 +57,7 @@ public class LogPerformanceDataTask implements ITask {
         try {
             // 运行时间,TPS,玩家数,总区块数,总实体数,总tiles,剩余内存,每个世界的数据细节,玩家列表
             this.logWriter.write("RunTime(s)\tTPS(Recent 100 tick average)\tPlayerCount\tChunkCount\tEntityCount\tTilesCount\tFreeMem(MB)\tWorldDatas\tPlayers\n");
+            this.logWriter.flush();
         } catch (final Exception e) {
             e.printStackTrace();
         }
@@ -154,6 +155,7 @@ public class LogPerformanceDataTask implements ITask {
             // 写出到日志文件
             // 运行时间,TPS,玩家数,总区块数,总实体数,总tiles,剩余内存,每个世界的数据细节,玩家列表
             this.logWriter.write(String.format("%d\t%f\t%d\t%d\t%d\t%d\t%d\t%s\t%s\n", runTime, tps, totalPlayerCount, totalChunkCount, totalEntityCount, totalTilesCount, freeRAM, worldData, playerList));
+            this.logWriter.flush();
         } catch (final Exception e) {
             e.printStackTrace();
         }
