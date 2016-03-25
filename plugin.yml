@@ -6,7 +6,7 @@ version: 1.0.0
 commands:
   performancedebugger:
     description: PerformanceDebugger base command
-    usage: /performancedebugger help
+    usage: /<command> help
     aliases: [pd]
     permission: performancedebugger.use
 permissions:
