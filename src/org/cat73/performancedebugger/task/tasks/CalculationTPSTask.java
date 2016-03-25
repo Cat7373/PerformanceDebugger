@@ -13,9 +13,18 @@ public class CalculationTPSTask implements ITask {
     /** 上次 Task 被主线程执行的时间 */
     private static long lastPoll;
     /** 最后一次统计到的 TPS */
-    private static double lastTPS = 20.0D;
+    private static double[] lastTPS = new double[5];
+    /** 最后一次写的位置 */
+    private static int lastPoint = 0;
     /** Task ID */
     private int taskID = -1;
+
+    // 初始化
+    static {
+        for (int i = 0; i < CalculationTPSTask.lastTPS.length; i++) {
+            CalculationTPSTask.lastTPS[i] = 20.0D;
+        }
+    }
 
     /**
      * 获取最近 100 个 tick 的平均 TPS
@@ -23,14 +32,22 @@ public class CalculationTPSTask implements ITask {
      * @return 最近 100 个 tick 的平均 TPS
      */
     public static double getLastTPS() {
-        return CalculationTPSTask.lastTPS;
+        // 计算 TPS
+        double tps = 0.0D;
+        for (final double currentTPS : CalculationTPSTask.lastTPS) {
+            tps += currentTPS;
+        }
+        tps /= CalculationTPSTask.lastTPS.length;
+
+        // 返回结果
+        return tps;
     }
 
     @Override
     public void start(final BukkitScheduler scheduler, final JavaPlugin javaPlugin) {
         // 启动 Task
         CalculationTPSTask.lastPoll = System.nanoTime();
-        this.taskID = scheduler.scheduleSyncRepeatingTask(javaPlugin, this, 100, 100);
+        this.taskID = scheduler.scheduleSyncRepeatingTask(javaPlugin, this, 20, 20);
     }
 
     @Override
@@ -58,6 +75,10 @@ public class CalculationTPSTask implements ITask {
         }
 
         // 计算并保存 TPS
-        CalculationTPSTask.lastTPS = 1.0E11D / timeSpent;
+        CalculationTPSTask.lastPoint++;
+        if (CalculationTPSTask.lastPoint >= CalculationTPSTask.lastTPS.length) {
+            CalculationTPSTask.lastPoint = 0;
+        }
+        CalculationTPSTask.lastTPS[CalculationTPSTask.lastPoint] = 2.0E10D / timeSpent;
     }
 }
