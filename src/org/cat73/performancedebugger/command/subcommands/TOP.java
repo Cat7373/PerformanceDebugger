@@ -1,22 +1,21 @@
-package org.cat73.performancedebugger.command.commands;
+package org.cat73.performancedebugger.command.subcommands;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.Server;
 import org.bukkit.World;
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.cat73.performancedebugger.command.CommandInfo;
-import org.cat73.performancedebugger.command.ICommand;
+import org.cat73.performancedebugger.command.SubCommandInfo;
+import org.cat73.performancedebugger.command.ISubCommand;
 
-@CommandInfo(name = "TOP", usage = "<type>", description = "统计某项指标在所有 Chunk 里的前 10 名", help = "type: entity, tiles")
-public class TOP implements ICommand {
+@SubCommandInfo(name = "TOP", usage = "<type>", description = "统计某项指标在所有 Chunk 里的前 10 名", help = "type: entity, tiles")
+public class TOP implements ISubCommand {
     /** Bukkit 的 Server 接口 */
     private final static Server server = Bukkit.getServer();
 
     @Override
-    public boolean execute(final CommandSender sender, final Command command, final String commandLabel, final String[] args) throws Exception {
+    public boolean handle(final CommandSender sender, final String[] args) throws Exception {
         if (args.length < 1) {
             return false;
         }

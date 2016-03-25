@@ -1,4 +1,4 @@
-package org.cat73.performancedebugger.command.commands;
+package org.cat73.performancedebugger.command.subcommands;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -10,25 +10,24 @@ import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.World;
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.cat73.performancedebugger.PerformanceDebugger;
-import org.cat73.performancedebugger.command.CommandInfo;
-import org.cat73.performancedebugger.command.ICommand;
+import org.cat73.performancedebugger.command.SubCommandInfo;
+import org.cat73.performancedebugger.command.ISubCommand;
 
 /**
  * 统计所有 Chunk 的信息并输出到日志文件
  *
  * @author cat73
  */
-@CommandInfo(name = "DumpChunks", description = "统计 Chunk 信息并写出到日志文件里", aliases = "dc")
-public class DumpChunks implements ICommand {
+@SubCommandInfo(name = "DumpChunks", description = "统计 Chunk 信息并写出到日志文件里", aliases = "dc")
+public class DumpChunks implements ISubCommand {
     /** Bukkit 的 Server 接口 */
     private final static Server server = Bukkit.getServer();
 
     @Override
-    public boolean execute(final CommandSender sender, final Command command, final String commandLabel, final String[] args) throws Exception {
+    public boolean handle(final CommandSender sender, final String[] args) throws Exception {
         // 输出信息头
         sender.sendMessage(String.format("%s%s------- 统计信息 ----------------", ChatColor.AQUA, ChatColor.BOLD));
 

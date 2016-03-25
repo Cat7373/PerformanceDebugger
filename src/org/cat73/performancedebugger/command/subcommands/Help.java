@@ -1,31 +1,30 @@
-package org.cat73.performancedebugger.command.commands;
+package org.cat73.performancedebugger.command.subcommands;
 
 import java.util.Collection;
 import java.util.Iterator;
 
 import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.cat73.performancedebugger.command.CommandHandler;
-import org.cat73.performancedebugger.command.CommandInfo;
-import org.cat73.performancedebugger.command.ICommand;
+import org.cat73.performancedebugger.command.SubCommandInfo;
+import org.cat73.performancedebugger.command.ISubCommand;
 
 /**
  * 帮助类
  *
  * @author cat73
  */
-@CommandInfo(name = "help", usage = "[page] [commandName]", description = "打印帮助信息", aliases = "h")
-public class Help implements ICommand {
+@SubCommandInfo(name = "help", usage = "[page] [commandName]", description = "打印帮助信息", aliases = "h")
+public class Help implements ISubCommand {
     /** 每页输出多少条帮助 */
     private static final int pageCommandCount = 8;
 
     @Override
-    public boolean execute(final CommandSender sender, final Command command, final String commandLabel, final String[] args) throws Exception {
+    public boolean handle(final CommandSender sender, final String[] args) throws Exception {
         // 首先来判断是不是有参数 没参数就打印第一页
         if (args.length >= 1) {
             // 判断是不是请求某个已存在命令的帮助
-            final ICommand commandExecer = CommandHandler.getCommandByNameOrAliase(args[0]);
+            final ISubCommand commandExecer = CommandHandler.getCommandByNameOrAliase(args[0]);
             if (commandExecer != null) {
                 // 如果是则打印该命令的帮助信息
                 Help.sendCommandHelp(sender, commandExecer);
@@ -58,7 +57,7 @@ public class Help implements ICommand {
      */
     private static void sendHelpPage(final CommandSender sender, int page) {
         // 帮助列表的Set对象
-        final Collection<ICommand> commands = CommandHandler.getCommands();
+        final Collection<ISubCommand> commands = CommandHandler.getCommands();
         // 帮助的总量
         final int helpCommandCount = commands.size();
         // 计算总页数
@@ -68,13 +67,13 @@ public class Help implements ICommand {
 
         sender.sendMessage(String.format("%s%s------- 命令列表 (" + page + "/" + maxPage + ") ----------------", ChatColor.AQUA, ChatColor.BOLD));
 
-        final Iterator<ICommand> it = commands.iterator();
+        final Iterator<ISubCommand> it = commands.iterator();
         for (int i = 0; i < (page - 1) * Help.pageCommandCount; i++) {
             it.next();
         }
         for (int i = 0; i < Help.pageCommandCount && it.hasNext(); i++) {
-            final ICommand commandExecer = it.next();
-            final CommandInfo info = CommandHandler.getCommandInfo(commandExecer);
+            final ISubCommand commandExecer = it.next();
+            final SubCommandInfo info = CommandHandler.getCommandInfo(commandExecer);
             sender.sendMessage(ChatColor.GREEN + String.format("%s -- %s", info.name(), info.description()));
         }
     }
@@ -85,8 +84,8 @@ public class Help implements ICommand {
      * @param sender
      * @param command 命令的执行器
      */
-    public static void sendCommandHelp(final CommandSender sender, final ICommand command) {
-        final CommandInfo info = CommandHandler.getCommandInfo(command);
+    public static void sendCommandHelp(final CommandSender sender, final ISubCommand command) {
+        final SubCommandInfo info = CommandHandler.getCommandInfo(command);
         sender.sendMessage(String.format("%s%s------- help %s ----------------", ChatColor.AQUA, ChatColor.BOLD, info.name()));
         // 命令的用法 / 参数
         sender.sendMessage(ChatColor.GREEN + String.format("/%s %s %s", CommandHandler.BASE_COMMAND, info.name(), info.usage()));

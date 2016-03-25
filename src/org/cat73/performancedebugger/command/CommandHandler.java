@@ -9,15 +9,16 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.cat73.performancedebugger.IModule;
-import org.cat73.performancedebugger.command.commands.DumpChunks;
-import org.cat73.performancedebugger.command.commands.Help;
-import org.cat73.performancedebugger.command.commands.PlayersInfo;
-import org.cat73.performancedebugger.command.commands.TOP;
-import org.cat73.performancedebugger.command.commands.TPChunk;
-import org.cat73.performancedebugger.command.commands.TPS;
+import org.cat73.performancedebugger.command.subcommands.DumpChunks;
+import org.cat73.performancedebugger.command.subcommands.Help;
+import org.cat73.performancedebugger.command.subcommands.PlayersInfo;
+import org.cat73.performancedebugger.command.subcommands.TOP;
+import org.cat73.performancedebugger.command.subcommands.TPChunk;
+import org.cat73.performancedebugger.command.subcommands.TPS;
 
 // TODO 增加 reload
 // TODO 增加统计所有玩家周围某种实体数量的功能
+// TODO 实现 TabExecutor
 /**
  * 命令的执行器
  *
@@ -27,14 +28,14 @@ public class CommandHandler implements CommandExecutor, IModule {
     /** 基础命令名 */
     public static final String BASE_COMMAND = "performancedebugger";
 
-    /* 存储的命令列表 */
-    private static final HashMap<String, ICommand> commandList = new HashMap<String, ICommand>();
+    /* 存储的子命令列表 */
+    private static final HashMap<String, ISubCommand> commandList = new HashMap<String, ISubCommand>();
 
-    /* 命令的简写缓存 */
-    private static final HashMap<String, ICommand> aliaseCache = new HashMap<String, ICommand>();
+    /* 子命令的简写缓存 */
+    private static final HashMap<String, ISubCommand> aliaseCache = new HashMap<String, ISubCommand>();
 
     static {
-        // 注册所有命令
+        // 注册所有子命令
         CommandHandler.registerCommand(new Help());
         CommandHandler.registerCommand(new DumpChunks());
         CommandHandler.registerCommand(new PlayersInfo());
@@ -44,12 +45,12 @@ public class CommandHandler implements CommandExecutor, IModule {
     }
 
     /**
-     * 注册一个命令
+     * 注册一个子命令
      *
-     * @param command 命令的执行器
+     * @param command 子命令的执行器
      */
-    private static void registerCommand(final ICommand command) {
-        final CommandInfo info = CommandHandler.getCommandInfo(command);
+    private static void registerCommand(final ISubCommand command) {
+        final SubCommandInfo info = CommandHandler.getCommandInfo(command);
         final String name = info.name().toLowerCase();
 
         CommandHandler.commandList.put(name, command);
@@ -59,32 +60,32 @@ public class CommandHandler implements CommandExecutor, IModule {
     }
 
     /**
-     * 获取命令列表
+     * 获取子命令列表
      *
-     * @return 命令列表
+     * @return 子命令列表
      */
-    public static Collection<ICommand> getCommands() {
+    public static Collection<ISubCommand> getCommands() {
         return CommandHandler.commandList.values();
     }
 
     /**
-     * 获取一个命令的信息
+     * 获取一个子命令的信息
      *
-     * @param command 命令的执行器
-     * @return 该命令的信息
+     * @param command 子命令的执行器
+     * @return 该子命令的信息
      */
-    public static CommandInfo getCommandInfo(final ICommand command) {
-        return command.getClass().getAnnotation(CommandInfo.class);
+    public static SubCommandInfo getCommandInfo(final ISubCommand command) {
+        return command.getClass().getAnnotation(SubCommandInfo.class);
     }
 
     /**
-     * 根据名称或简写获取一个命令的执行器
+     * 根据名称或简写获取一个子命令的执行器
      *
-     * @param nameOrAliase 命令的名称或者简写
-     * @return 命令的执行器, 如果未找到则返回 null
+     * @param nameOrAliase 子命令的名称或者简写
+     * @return 子命令的执行器, 如果未找到则返回 null
      */
-    public static ICommand getCommandByNameOrAliase(final String nameOrAliase) {
-        final ICommand command = CommandHandler.commandList.get(nameOrAliase);
+    public static ISubCommand getCommandByNameOrAliase(final String nameOrAliase) {
+        final ISubCommand command = CommandHandler.commandList.get(nameOrAliase);
         return command != null ? command : CommandHandler.aliaseCache.get(nameOrAliase);
     }
 
@@ -98,7 +99,7 @@ public class CommandHandler implements CommandExecutor, IModule {
 
     @Override
     public boolean onCommand(final CommandSender sender, final Command command, final String commandLabel, String[] args) {
-        // 查找被执行的命令
+        // 查找被执行的子命令
         switch (command.getName()) {
             case BASE_COMMAND:
                 // 如果没有参数则执行帮助
@@ -107,7 +108,7 @@ public class CommandHandler implements CommandExecutor, IModule {
                 }
 
                 // 获取目标子命令的执行器
-                ICommand commandExecer = CommandHandler.getCommandByNameOrAliase(args[0].toLowerCase());
+                ISubCommand commandExecer = CommandHandler.getCommandByNameOrAliase(args[0].toLowerCase());
 
                 // 获取失败则执行帮助
                 if (commandExecer == null) {
@@ -121,9 +122,9 @@ public class CommandHandler implements CommandExecutor, IModule {
                 }
 
                 try {
-                    // 执行命令
-                    if (!commandExecer.execute(sender, command, commandLabel, tmp)) {
-                        // 如果返回 false 则打印该命令的帮助
+                    // 执行子命令
+                    if (!commandExecer.handle(sender, tmp)) {
+                        // 如果返回 false 则打印该子命令的帮助
                         Help.sendCommandHelp(sender, commandExecer);
                     }
                 } catch (final Exception e) {

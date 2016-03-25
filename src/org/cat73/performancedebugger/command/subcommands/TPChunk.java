@@ -1,29 +1,28 @@
-package org.cat73.performancedebugger.command.commands;
+package org.cat73.performancedebugger.command.subcommands;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.World;
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
-import org.cat73.performancedebugger.command.CommandInfo;
-import org.cat73.performancedebugger.command.ICommand;
+import org.cat73.performancedebugger.command.SubCommandInfo;
+import org.cat73.performancedebugger.command.ISubCommand;
 
 /**
  * 将玩家 TP 到一个 Chunk 的中心，方便找到问题 Chunk 后前往查看
  *
  * @author cat73
  */
-@CommandInfo(name = "TPChunk", usage = "<x> <z> [world]", description = "TP 到目标 Chunk 的中心", aliases = "tp")
-public class TPChunk implements ICommand {
+@SubCommandInfo(name = "TPChunk", usage = "<x> <z> [world]", description = "TP 到目标 Chunk 的中心", aliases = "tp")
+public class TPChunk implements ISubCommand {
     /** Bukkit 的 Server 接口 */
     private final static Server server = Bukkit.getServer();
 
     @Override
-    public boolean execute(final CommandSender sender, final Command command, final String commandLabel, final String[] args) throws Exception {
+    public boolean handle(final CommandSender sender, final String[] args) throws Exception {
         if (sender instanceof ConsoleCommandSender) {
             sender.sendMessage(ChatColor.RED + "该命令只能由玩家执行!");
             return true;
