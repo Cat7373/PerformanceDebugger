@@ -16,6 +16,9 @@ public @interface SubCommandInfo {
     /** 子命令的名称 */
     String name();
 
+    /** 执行这个命令所需的权限, 为空则无需任何权限即可执行 */
+    String permission() default "";
+
     /** 子命令的使用方法 */
     String usage() default "";
 

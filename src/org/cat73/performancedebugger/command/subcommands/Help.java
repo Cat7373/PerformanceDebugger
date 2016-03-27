@@ -1,20 +1,22 @@
 package org.cat73.performancedebugger.command.subcommands;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.cat73.performancedebugger.command.CommandHandler;
-import org.cat73.performancedebugger.command.SubCommandInfo;
 import org.cat73.performancedebugger.command.ISubCommand;
+import org.cat73.performancedebugger.command.SubCommandInfo;
 
 /**
  * 帮助类
  *
  * @author cat73
  */
-@SubCommandInfo(name = "help", usage = "[page] [commandName]", description = "打印帮助信息", aliases = "h")
+@SubCommandInfo(name = "help", permission = "performancedebugger.help", usage = "[page] [commandName]", description = "打印帮助信息", aliases = "h")
 public class Help implements ISubCommand {
     /** 每页输出多少条帮助 */
     private static final int pageCommandCount = 8;
@@ -25,8 +27,8 @@ public class Help implements ISubCommand {
         if (args.length >= 1) {
             // 判断是不是请求某个已存在命令的帮助
             final ISubCommand commandExecer = CommandHandler.getCommandByNameOrAliase(args[0]);
-            if (commandExecer != null) {
-                // 如果是则打印该命令的帮助信息
+            if (commandExecer != null && CommandHandler.hasPermission(commandExecer, sender)) {
+                // 如果是且有权限执行则打印该命令的帮助信息
                 Help.sendCommandHelp(sender, commandExecer);
             } else {
                 // 如果不是则视为页码并打印
@@ -56,10 +58,21 @@ public class Help implements ISubCommand {
      * @param page 要打印的页码
      */
     private static void sendHelpPage(final CommandSender sender, int page) {
-        // 帮助列表的Set对象
+        // 所有子命令
         final Collection<ISubCommand> commands = CommandHandler.getCommands();
-        // 帮助的总量
-        final int helpCommandCount = commands.size();
+
+        // 获取有权执行的子命令
+        final Set<ISubCommand> hasPermissionCommands = new HashSet<>();
+        Iterator<ISubCommand> it = commands.iterator();
+        while (it.hasNext()) {
+            final ISubCommand command = it.next();
+            if (CommandHandler.hasPermission(command, sender)) {
+                hasPermissionCommands.add(command);
+            }
+        }
+
+        // 命令的总量
+        final int helpCommandCount = hasPermissionCommands.size();
         // 计算总页数
         final int maxPage = helpCommandCount / Help.pageCommandCount + (helpCommandCount % Help.pageCommandCount == 0 ? 0 : 1);
         // 防止超出总数
@@ -67,10 +80,13 @@ public class Help implements ISubCommand {
 
         sender.sendMessage(String.format("%s%s------- 命令列表 (" + page + "/" + maxPage + ") ----------------", ChatColor.AQUA, ChatColor.BOLD));
 
-        final Iterator<ISubCommand> it = commands.iterator();
+        // 获取命令列表的迭代器
+        it = hasPermissionCommands.iterator();
+        // 跳过前几页的内容
         for (int i = 0; i < (page - 1) * Help.pageCommandCount; i++) {
             it.next();
         }
+        // 输出目标页的内容
         for (int i = 0; i < Help.pageCommandCount && it.hasNext(); i++) {
             final ISubCommand commandExecer = it.next();
             final SubCommandInfo info = CommandHandler.getCommandInfo(commandExecer);

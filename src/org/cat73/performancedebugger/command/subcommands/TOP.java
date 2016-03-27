@@ -6,10 +6,10 @@ import org.bukkit.Chunk;
 import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
-import org.cat73.performancedebugger.command.SubCommandInfo;
 import org.cat73.performancedebugger.command.ISubCommand;
+import org.cat73.performancedebugger.command.SubCommandInfo;
 
-@SubCommandInfo(name = "TOP", usage = "<type>", description = "统计某项指标在所有 Chunk 里的前 10 名", help = "type: entity, tiles")
+@SubCommandInfo(name = "TOP", permission = "performancedebugger.top", usage = "<type>", description = "统计某项指标在所有 Chunk 里的前 10 名", help = "type: entity, tiles")
 public class TOP implements ISubCommand {
     /** Bukkit 的 Server 接口 */
     private final static Server server = Bukkit.getServer();

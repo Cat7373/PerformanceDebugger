@@ -5,11 +5,22 @@ website: https://github.com/Cat7373/PerformanceDebugger
 version: 1.0.0
 commands:
   performancedebugger:
-    description: PerformanceDebugger base command
     usage: /<command> help
     aliases: [pd]
     permission: performancedebugger.use
+    permission-message: You don't have <permission>
 permissions:
   performancedebugger.use:
-    description: Allows access to all PerformanceDebugger command.
+    default: op
+  performancedebugger.help:
+    default: op
+  performancedebugger.dumpchunks:
+    default: op
+  performancedebugger.playersinfo:
+    default: op
+  performancedebugger.top:
+    default: op
+  performancedebugger.tpchunk:
+    default: op
+  performancedebugger.tps:
     default: op

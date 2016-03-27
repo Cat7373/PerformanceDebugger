@@ -89,6 +89,29 @@ public class CommandHandler implements CommandExecutor, IModule {
         return command != null ? command : CommandHandler.aliaseCache.get(nameOrAliase);
     }
 
+    /**
+     * 判断命令执行者有没有一个子命令的执行权限
+     *
+     * @param command 子命令的执行器
+     * @param sender 执行者
+     * @return 该执行者有无权限执行这条子命令
+     */
+    public static boolean hasPermission(final ISubCommand command, final CommandSender sender) {
+        // 获取子命令的信息
+        final SubCommandInfo info = CommandHandler.getCommandInfo(command);
+
+        // 判断有无权限执行这个子命令
+        if (info.permission().isEmpty()) {
+            return true;
+        } else {
+            if (sender.hasPermission(info.permission())) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
+
     @Override
     public void onEnable(final JavaPlugin javaPlugin) {
         javaPlugin.getCommand(CommandHandler.BASE_COMMAND).setExecutor(this);
@@ -103,7 +126,7 @@ public class CommandHandler implements CommandExecutor, IModule {
         switch (command.getName()) {
             case BASE_COMMAND:
                 // 如果没有参数则执行帮助
-                if (args.length == 0) {
+                if (args == null || args.length < 1) {
                     args = new String[] {"help"};
                 }
 
@@ -113,6 +136,13 @@ public class CommandHandler implements CommandExecutor, IModule {
                 // 获取失败则执行帮助
                 if (commandExecer == null) {
                     commandExecer = CommandHandler.getCommandByNameOrAliase("help");
+                }
+
+                // 判断有无权限执行这个子命令
+                if (!CommandHandler.hasPermission(commandExecer, sender)) {
+                    final SubCommandInfo info = CommandHandler.getCommandInfo(commandExecer);
+                    sender.sendMessage(String.format("%s%s你需要 %s 权限才能执行 %s 命令.", ChatColor.RED, ChatColor.BOLD, info.permission(), info.name()));
+                    return true;
                 }
 
                 // 修剪参数 (删除子命令名)

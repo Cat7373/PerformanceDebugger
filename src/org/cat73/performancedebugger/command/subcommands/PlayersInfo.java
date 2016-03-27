@@ -6,15 +6,15 @@ import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.cat73.performancedebugger.command.SubCommandInfo;
 import org.cat73.performancedebugger.command.ISubCommand;
+import org.cat73.performancedebugger.command.SubCommandInfo;
 
 /**
  * 显示所有玩家的统计信息 (目前只统计所在坐标)
  *
  * @author cat73
  */
-@SubCommandInfo(name = "PlayersInfo", description = "显示所有玩家的位置", aliases = "pi")
+@SubCommandInfo(name = "PlayersInfo", permission = "performancedebugger.playersinfo", description = "显示所有玩家的位置", aliases = "pi")
 public class PlayersInfo implements ISubCommand {
     /** Bukkit 的 Server 接口 */
     private final static Server server = Bukkit.getServer();

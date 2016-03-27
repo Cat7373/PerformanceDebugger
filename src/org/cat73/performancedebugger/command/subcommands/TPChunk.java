@@ -8,15 +8,15 @@ import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
-import org.cat73.performancedebugger.command.SubCommandInfo;
 import org.cat73.performancedebugger.command.ISubCommand;
+import org.cat73.performancedebugger.command.SubCommandInfo;
 
 /**
  * 将玩家 TP 到一个 Chunk 的中心，方便找到问题 Chunk 后前往查看
  *
  * @author cat73
  */
-@SubCommandInfo(name = "TPChunk", usage = "<x> <z> [world]", description = "TP 到目标 Chunk 的中心", aliases = "tp")
+@SubCommandInfo(name = "TPChunk", permission = "performancedebugger.tpchunk", usage = "<x> <z> [world]", description = "TP 到目标 Chunk 的中心", aliases = "tp")
 public class TPChunk implements ISubCommand {
     /** Bukkit 的 Server 接口 */
     private final static Server server = Bukkit.getServer();

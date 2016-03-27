@@ -13,15 +13,15 @@ import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.cat73.performancedebugger.PerformanceDebugger;
-import org.cat73.performancedebugger.command.SubCommandInfo;
 import org.cat73.performancedebugger.command.ISubCommand;
+import org.cat73.performancedebugger.command.SubCommandInfo;
 
 /**
  * 统计所有 Chunk 的信息并输出到日志文件
  *
  * @author cat73
  */
-@SubCommandInfo(name = "DumpChunks", description = "统计 Chunk 信息并写出到日志文件里", aliases = "dc")
+@SubCommandInfo(name = "DumpChunks", permission = "performancedebugger.dumpchunks", description = "统计 Chunk 信息并写出到日志文件里", aliases = "dc")
 public class DumpChunks implements ISubCommand {
     /** Bukkit 的 Server 接口 */
     private final static Server server = Bukkit.getServer();
