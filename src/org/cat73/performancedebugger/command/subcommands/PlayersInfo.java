@@ -28,7 +28,7 @@ public class PlayersInfo implements ISubCommand {
         for (final Player player : PlayersInfo.server.getOnlinePlayers()) {
             // 输出当前玩家的信息
             final Location location = player.getLocation();
-            sender.sendMessage(ChatColor.GREEN + String.format("%s: world: %s, x: %f, y: %f, z:%f\n", player.getName(), player.getWorld().getName(), location.getX(), location.getY(), location.getZ()));
+            sender.sendMessage(ChatColor.GREEN + String.format("%s: world: %s, x: %f, y: %f, z:%f", player.getName(), player.getWorld().getName(), location.getX(), location.getY(), location.getZ()));
         }
 
         return true;
