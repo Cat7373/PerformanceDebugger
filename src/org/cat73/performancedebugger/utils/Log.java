@@ -90,9 +90,11 @@ public class Log {
     public static void debugs(final Object... objs) {
         String message = "";
         for (final Object obj : objs) {
-            message += obj.toString();
+            message += obj.toString() + ", ";
         }
-        message = message.substring(0, message.length() - 1);
+        if(!message.isEmpty()) {
+            message = message.substring(0, message.length() - 2);
+        }
 
         Log.log(Level.INFO, "[DEBUG] " + message);
     }

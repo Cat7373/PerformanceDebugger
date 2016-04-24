@@ -10,12 +10,12 @@ import java.util.List;
 import org.bukkit.Chunk;
 import org.bukkit.Server;
 import org.bukkit.World;
-import org.bukkit.craftbukkit.libs.jline.internal.Log;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.cat73.performancedebugger.PerformanceDebugger;
 import org.cat73.performancedebugger.task.ITask;
+import org.cat73.performancedebugger.utils.Log;
 
 /**
  * 记录性能日志的 Task<br>
