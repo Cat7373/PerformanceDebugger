@@ -110,7 +110,7 @@ public class LogPerformanceDataTask implements ITask {
 
             // 统计每个世界的信息
             for (final World world : this.server.getWorlds()) {
-                if(world == null) {
+                if (world == null) {
                     continue;
                 }
 
@@ -128,7 +128,7 @@ public class LogPerformanceDataTask implements ITask {
                 // 统计每个区块的信息
                 for (final Chunk chunk : chunks) {
                     // 更新当前世界的数据
-                    if(chunk.isLoaded()) {
+                    if (chunk.isLoaded()) {
                         worldTilesCount += chunk.getTileEntities().length;
                     }
                 }

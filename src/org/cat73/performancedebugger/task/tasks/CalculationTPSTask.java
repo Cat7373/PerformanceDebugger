@@ -13,7 +13,7 @@ public class CalculationTPSTask implements ITask {
     /** 上次 Task 被主线程执行的时间 */
     private static long lastPoll;
     /** 最后一次统计到的 TPS */
-    private static double[] lastTPS = new double[5];
+    private static double[] lastTPS = new double[10];
     /** 最后一次写的位置 */
     private static int lastPoint = 0;
     /** Task ID */
@@ -27,9 +27,9 @@ public class CalculationTPSTask implements ITask {
     }
 
     /**
-     * 获取最近 100 个 tick 的平均 TPS
+     * 获取最近 200 个 tick 的平均 TPS
      *
-     * @return 最近 100 个 tick 的平均 TPS
+     * @return 最近 200 个 tick 的平均 TPS
      */
     public static double getLastTPS() {
         // 计算 TPS
